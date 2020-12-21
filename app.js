@@ -8,6 +8,7 @@ const {
   handleValidationErrors,
   validateUserLogin,
 } = require("./userValid");
+
 let users = require("./users.json");
 const { json } = require("body-parser");
 //static files(css,js)& middleware
@@ -18,50 +19,35 @@ app.use(cors());
 app.get("/", (req, res) => {
   res.send("dsd");
 });
-app.post(
-  "/adoption/signup",
-  validateUserSignup,
-  handleValidationErrors,
-  (req, res) => {
-    const {
-      firstName,
-      lastName,
-      email,
-      phone,
-      password,
-      repetPassword,
-    } = req.body;
+app.post("/signup", validateUserSignup, handleValidationErrors, (req, res) => {
+  users.push(req.body);
+  fs.writeFileSync("./users.json", JSON.stringify(users, null, 2));
+  res.send(req.body);
+});
 
-    users.push(req.body);
-    fs.writeFileSync("./users.json", JSON.stringify(users, null, 2));
-    res.send({
-      email: email,
-      name: firstName + " " + lastName,
-    });
-  }
-);
+app.post("/login", validateUserLogin, handleValidationErrors, (req, res) => {
+  const { email, password } = req.body;
 
-app.post(
-  "/adoption/login",
-  validateUserLogin,
-  handleValidationErrors,
-  (req, res) => {
-    const { email, password } = req.body;
+  fs.readFile("./users.json", "utf8", function read(err, data) {
+    if (err) {
+      throw err;
+    }
+    const exists = logUser(JSON.parse(data), email, password);
+    if (exists) {
+      res.send(exists);
+    } else res.send(null);
+  });
+});
 
-    fs.readFile("./users.json", "utf8", function read(err, data) {
-      if (err) {
-        throw err;
-      }
-      const exists = logUser(JSON.parse(data), email, password);
-      if (exists) {
-        res.send({
-          email: exists[0].email,
-          name: exists[0].firstName + " " + exists[0].lastName,
-        });
-      } else res.send(null);
-    });
-  }
-);
+app.put("/user/:id", (req, res) => {
+  const { id } = req.params;
+  const updateUser = req.body;
+  const newUserList = users.map((user) => {
+    return user.uId == id ? { ...user, ...updateUser } : user;
+  });
+  fs.writeFileSync("./users.json", JSON.stringify(newUserList, null, 2));
+  res.json(newUserList);
+});
 
 const logUser = (data, email, password) => {
   const user = data.filter((item) => {

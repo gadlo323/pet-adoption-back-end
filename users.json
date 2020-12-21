@@ -1,10 +1,22 @@
 [
   {
-    "firstName": "isreal",
+    "uId": "8b451980-e25b-43fa-908a-1059ae5158ad",
+    "firstName": "isayas",
     "lastName": "Gadlo",
     "email": "gadlo323@gmail.com",
     "phone": "0532214634",
     "password": "Ba123456",
-    "repeatPassword": "Ba123456"
+    "repeatPassword": "Ba123456",
+    "bio": "hello world"
+  },
+  {
+    "uId": "2722381b-2c66-402d-a692-c43f48764269",
+    "firstName": "daslin",
+    "lastName": "gadlo",
+    "email": "daslin@gmail.com",
+    "phone": "0532214655",
+    "password": "Bb123456",
+    "repeatPassword": "Bb123456",
+    "bio": "I love Dogs (:"
   }
 ]

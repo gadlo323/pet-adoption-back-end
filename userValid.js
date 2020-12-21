@@ -23,6 +23,15 @@ const validateUserLogin = [
     .withMessage("password is vaild"),
 ];
 
+const validateUserUpdate = [
+  body("email").isEmail(),
+  body("password").matches(
+    /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm
+  ),
+  body("firstName").isLength({ min: 2, max: 10 }),
+  body("lastName").isLength({ min: 2, max: 12 }),
+];
+
 const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
 
@@ -37,4 +46,5 @@ module.exports = {
   validateUserSignup,
   handleValidationErrors,
   validateUserLogin,
+  validateUserUpdate,
 };
