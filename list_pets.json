@@ -110,5 +110,19 @@
     "dietary": "no",
     "bio": "i like ",
     "image": "petImage - 1608844434211.jpg"
+  },
+  {
+    "id": "c4b7e15f-e685-435c-b6c2-cd43f2858f68",
+    "type": "cat",
+    "name": "Oli",
+    "status": "Available",
+    "hypoallergenic": "NO",
+    "height": "50",
+    "weight": "4",
+    "breed": "Burmese",
+    "color": "black",
+    "dietary": "no",
+    "bio": "very fun with me",
+    "image": "petImage - 1609067783423.jpg"
   }
 ]

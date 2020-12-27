@@ -1,5 +1,5 @@
 require("dotenv").config();
-const fs = require("fs");
+const users = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 
 const createToken = (data) => {
@@ -17,27 +17,28 @@ const verifyToken = async (token) => {
 
 const isAdmin = async (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
-  const user = await verifyToken(token);
-  if (!user) res.status(403).send("Error, Forbidden");
-  fs.readFile("./users.json", "utf8", async function read(err, data) {
-    if (err) {
-      throw err;
-    }
-    const allUsers = await JSON.parse(data);
-    const userObj = userInfo(user, allUsers);
-    if (userObj.role == process.env.ADMIN_STATUS) {
-      next();
-    } else {
-      res.status(403).send("Error, Forbidden");
-    }
-  });
+  const userId = await verifyToken(token);
+  if (!userId) res.status(403).send("Error, Forbidden");
+  const userObj = await userInfo(userId);
+  if (userObj.role == process.env.ADMIN_STATUS) {
+    next();
+  } else {
+    res.status(403).send("Error, Forbidden");
+  }
 };
 
-const userInfo = (userId, data) => {
-  const user = data.filter((item) => {
-    return item.uId == userId;
+const userInfo = async (userId) => {
+  return await users.findOne({ _id: userId }, (err, data) => {
+    if (err)
+      return res
+        .status(500)
+        .send(
+          "Oops There seems to be a server problem! Please try again later. "
+        );
+    else {
+      return data;
+    }
   });
-  return user[0];
 };
 
 module.exports = { createToken, verifyToken, isAdmin };
