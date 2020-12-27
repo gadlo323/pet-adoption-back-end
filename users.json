@@ -1,22 +1,24 @@
 [
   {
-    "uId": "8b451980-e25b-43fa-908a-1059ae5158ad",
+    "uId": "d94efb95-fdaf-4ca9-8bc1-4c50c54a9a3e",
+    "firstName": "shai",
+    "lastName": "shai",
+    "email": "shai@gmail.com",
+    "phone": "0532214634",
+    "password": "$2b$10$AwbmUQsWoQNrmX5N77QEwe47Fs.arPDYp68TNSjzEYPq4HxqmOuPy",
+    "repeatPassword": "Ba123456",
+    "bio": "I love Dogs (:",
+    "role": "1"
+  },
+  {
+    "uId": "d94efb95-fdaf-4ca9-8xc1-4c50c54a9a3e",
     "firstName": "isayas",
     "lastName": "Gadlo",
     "email": "gadlo323@gmail.com",
     "phone": "0532214634",
-    "password": "Ba123456",
+    "password": "$2b$10$AwbmUQsWoQNrmX5N77QEwe47Fs.arPDYp68TNSjzEYPq4HxqmOuPy",
     "repeatPassword": "Ba123456",
-    "bio": "hello world"
-  },
-  {
-    "uId": "2722381b-2c66-402d-a692-c43f48764269",
-    "firstName": "daslin",
-    "lastName": "gadlo",
-    "email": "daslin@gmail.com",
-    "phone": "0532214655",
-    "password": "Bb123456",
-    "repeatPassword": "Bb123456",
-    "bio": "I love Dogs (:"
+    "bio": "I love Dogs (:",
+    "role": "2"
   }
 ]
