@@ -2,7 +2,7 @@ const fs = require("fs");
 const bcrypt = require("bcrypt");
 const users = require("../models/userModel");
 const pets = require("../models/petsModel");
-const { createToken, verifyToken, isAdmin } = require("../utils/auth");
+const { createToken, verifyToken } = require("../utils/auth");
 
 const sign_up = async (req, res, next) => {
   try {
