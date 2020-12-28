@@ -12,7 +12,7 @@ mongoose
     mongo_url,
     { useNewUrlParser: true, useUnifiedTopology: true },
     { useFindAndModify: true },
-    { useCreateIndex: true }
+    { useCreateIndex: false }
   )
   .then(() => {
     console.log("Connection to the db is successful!");

@@ -2,10 +2,13 @@ const fs = require("fs");
 const bcrypt = require("bcrypt");
 const users = require("../models/userModel");
 const pets = require("../models/petsModel");
+const { signIn, signUp, updateUser, addPet } = require("../utils/validations");
 const { createToken, verifyToken } = require("../utils/auth");
 
 const sign_up = async (req, res, next) => {
   try {
+    const { error } = signUp.validate(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
     // Check if this user already exisits
     const userExsicte = await users.findOne({ email: req.body.email });
     if (userExsicte) {
@@ -40,6 +43,8 @@ const sign_up = async (req, res, next) => {
 
 const sign_in = async (req, res) => {
   const { email, password } = req.body;
+  const { error } = signIn.validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
   users.findOne({ email: email }, async (err, userFound) => {
     if (err) return res.status(400).send("Password or Email are incorrect !");
     if (!userFound) {
@@ -86,39 +91,46 @@ const token_valid = async (req, res) => {
 };
 
 const user_update = async (req, res) => {
-  //cheack the algo after 2 submit of email exsicte is return error
-  const { id } = req.params;
-  const updateUser = req.body;
-  let exsicte = false;
-  if (updateUser.email) {
-    await users.findOne({ email: updateUser.email }, (err, userExsicte) => {
-      if (err)
-        res
-          .status(500)
-          .send(
-            "Oops There seems to be a server problem! Please try again later. "
-          );
-      if (userExsicte) {
-        exsicte = true;
-        return res.status(400).send("That email is already in use!");
-      }
-    });
-  }
-  if (!exsicte) {
-    users.findOneAndUpdate(
-      { _id: id },
-      updateUser,
-      { useFindAndModify: false },
-      (err, data) => {
+  try {
+    const { id } = req.params;
+    const data = req.body;
+    const { error } = updateUser.validate(data);
+    if (error) return res.status(400).send(error.details[0].message);
+    //cheack the algo after 2 submit of email exsicte is return error
+
+    let exsicte = false;
+    if (updateUser.email) {
+      await users.findOne({ email: updateUser.email }, (err, userExsicte) => {
         if (err)
           res
-            .status(400)
+            .status(500)
             .send(
-              "There seems to be a problem.The update was not successful.Please try again later."
+              "Oops There seems to be a server problem! Please try again later. "
             );
-        res.json(true);
-      }
-    );
+        if (userExsicte) {
+          exsicte = true;
+          return res.status(400).send("That email is already in use!");
+        }
+      });
+    }
+    if (!exsicte) {
+      users.findOneAndUpdate(
+        { _id: id },
+        data,
+        { useFindAndModify: false },
+        (err, data) => {
+          if (err)
+            res
+              .status(400)
+              .send(
+                "There seems to be a problem.The update was not successful.Please try again later."
+              );
+          res.json(true);
+        }
+      );
+    }
+  } catch (err) {
+    res.status(500).send("oops server shot dwon");
   }
 };
 
@@ -136,16 +148,18 @@ const get_user = (req, res) => {
     }
   });
 };
+
 const add_pet = (req, res) => {
   const { filename } = req.file;
   let petData = JSON.parse(req.body.data);
+  const { error } = addPet.validate(petData);
+  if (error) return res.status(400).send(error.details[0].message);
   const hypoallergenic = petData.hypoallergenic == "true";
-  console.log(hypoallergenic);
   try {
     const newpet = new pets({
       type: petData.type,
       name: petData.name,
-      hypoallergenic: true,
+      hypoallergenic: hypoallergenic,
       status: petData.status ? petData.status : "Available",
       height: +petData.height,
       weight: +petData.weight,
@@ -155,13 +169,36 @@ const add_pet = (req, res) => {
       bio: petData.type,
       image_name: filename,
     });
-    console.log(newpet);
+    res.send(true);
     newpet.save((err, saveData) => {
       if (err) return res.status(500).send(err.message);
       else return res.send(true);
     });
   } catch (err) {
-    res.status(500).send(err);
+    res
+      .status(500)
+      .send("There seems to be a server problem! Please try again later.");
+  }
+};
+
+const get_pet = (req, res) => {
+  try {
+    const { id } = req.params;
+    pets.findOne({ _id: id }, (err, data) => {
+      if (err)
+        return res
+          .status(500)
+          .send(
+            "Oops There seems to be a server problem! Please try again later. "
+          );
+      else {
+        res.json(data);
+      }
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .send("There seems to be a server problem! Please try again later.");
   }
 };
 
@@ -172,4 +209,5 @@ module.exports = {
   token_valid,
   user_update,
   get_user,
+  get_pet,
 };

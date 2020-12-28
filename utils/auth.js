@@ -17,7 +17,9 @@ const verifyToken = async (token) => {
 
 const isAdmin = async (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
+
   const userId = await verifyToken(token);
+
   if (!userId) res.status(403).send("Error, Forbidden");
   const userObj = await userInfo(userId);
   if (userObj.role == process.env.ADMIN_STATUS) {

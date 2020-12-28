@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 const pet_schema = new mongoose.Schema({
-  role: String,
   type: {
     type: String,
     required: "Please supply an  type",
@@ -14,9 +13,9 @@ const pet_schema = new mongoose.Schema({
     type: String,
     required: "Please supply an status",
   },
-  hphohypoallergenicne: {
+  hypoallergenic: {
     type: Boolean,
-    // default: false,
+    default: false,
     required: "Please supply an hypoallergenic",
   },
   height: {
