@@ -151,6 +151,7 @@ const get_user = (req, res) => {
 
 const add_pet = (req, res) => {
   const { filename } = req.file;
+  console.log(req.file);
   let petData = JSON.parse(req.body.data);
   const { error } = addPet.validate(petData);
   if (error) return res.status(400).send(error.details[0].message);
@@ -169,7 +170,6 @@ const add_pet = (req, res) => {
       bio: petData.type,
       image_name: filename,
     });
-    res.send(true);
     newpet.save((err, saveData) => {
       if (err) return res.status(500).send(err.message);
       else return res.send(true);

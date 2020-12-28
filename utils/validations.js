@@ -193,14 +193,14 @@ const addPet = Joi.object({
     "any.required": `weight is a required field`,
   }),
   breed: Joi.string()
-    .max(12)
+    .max(20)
     .min(2)
     .regex(RegExp(/^[a-zA-Z\s]+$/))
     .required()
     .messages({
       "string.empty": `breed cannot be an empty field`,
       "string.min": `"breed" should have a minimum length of 2`,
-      "string.max": `"breed" should have a maximum length of 12`,
+      "string.max": `"breed" should have a maximum length of 20`,
       "any.required": `breed is a required field`,
     }),
   color: Joi.string()
