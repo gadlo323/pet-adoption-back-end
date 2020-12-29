@@ -208,6 +208,24 @@ const get_pet = (req, res) => {
   }
 };
 
+const search_type = (req, res) => {
+  const { query } = req.params;
+  try {
+    pets.find(
+      { type: query },
+      "name status type height weight image_url image_name",
+      (err, data) => {
+        if (err) res.status(400).send(`no type of ${query} is avilable`);
+        res.json(data);
+      }
+    );
+  } catch (err) {
+    res
+      .status(500)
+      .send("There seems to be a server problem! Please try again later.");
+  }
+};
+
 module.exports = {
   sign_up,
   sign_in,
@@ -216,4 +234,5 @@ module.exports = {
   user_update,
   get_user,
   get_pet,
+  search_type,
 };
