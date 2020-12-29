@@ -209,10 +209,27 @@ const get_pet = (req, res) => {
 };
 
 const search_type = (req, res) => {
-  const { query } = req.params;
   try {
     pets.find(
-      { type: query },
+      req.body,
+      "name status type height weight image_url image_name",
+      (err, data) => {
+        if (err) res.status(400).send(`no type of ${query} is avilable`);
+        res.json(data);
+      }
+    );
+  } catch (err) {
+    res
+      .status(500)
+      .send("There seems to be a server problem! Please try again later.");
+  }
+};
+const search_advance = (req, res) => {
+  try {
+    pets.find(
+      {
+        $and: [req.body],
+      },
       "name status type height weight image_url image_name",
       (err, data) => {
         if (err) res.status(400).send(`no type of ${query} is avilable`);
@@ -235,4 +252,5 @@ module.exports = {
   get_user,
   get_pet,
   search_type,
+  search_advance,
 };

@@ -22,6 +22,7 @@ router.get("/user/:id", petControllar.get_user);
 
 router.get("/pet/:id", petControllar.get_pet);
 
-router.get("/searchType/:query", petControllar.search_type);
+router.post("/searchType", petControllar.search_type);
+router.post("/searchAdvance", petControllar.search_advance);
 
 module.exports = router;
