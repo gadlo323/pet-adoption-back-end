@@ -1,7 +1,7 @@
-const fs = require("fs");
 const bcrypt = require("bcrypt");
 const users = require("../models/userModel");
 const pets = require("../models/petsModel");
+const cloudinary = require("../utils/cloudinary");
 const { signIn, signUp, updateUser, addPet } = require("../utils/validations");
 const { createToken, verifyToken } = require("../utils/auth");
 
@@ -149,14 +149,18 @@ const get_user = (req, res) => {
   });
 };
 
-const add_pet = (req, res) => {
-  const { filename } = req.file;
-  console.log(req.file);
+const add_pet = async (req, res) => {
+  const { originalname, path } = req.file;
   let petData = JSON.parse(req.body.data);
   const { error } = addPet.validate(petData);
   if (error) return res.status(400).send(error.details[0].message);
   const hypoallergenic = petData.hypoallergenic == "true";
   try {
+    // Upload image to cloudinary
+    const result = await cloudinary.uploader.upload(path, {
+      folder: "pets_project",
+      use_filename: true,
+    });
     const newpet = new pets({
       type: petData.type,
       name: petData.name,
@@ -167,8 +171,10 @@ const add_pet = (req, res) => {
       breed: petData.breed,
       color: petData.color,
       dietary: petData.dietary,
-      bio: petData.type,
-      image_name: filename,
+      bio: petData.bio,
+      image_url: result.secure_url,
+      image_name: originalname,
+      cloudinary_id: result.public_id,
     });
     newpet.save((err, saveData) => {
       if (err) return res.status(500).send(err.message);

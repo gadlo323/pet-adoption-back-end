@@ -44,6 +44,12 @@ const pet_schema = new mongoose.Schema({
   image_name: {
     type: String,
   },
+  image_url: {
+    type: String,
+  },
+  cloudinary_id: {
+    type: String,
+  },
 });
 
 const Pets = mongoose.model("pets", pet_schema);
