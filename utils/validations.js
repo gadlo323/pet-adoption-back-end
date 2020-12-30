@@ -23,7 +23,7 @@ const signIn = Joi.object({
 });
 const signUp = Joi.object({
   firstName: Joi.string()
-    .regex(RegExp(/^[a-z]+$/))
+    .regex(RegExp(/^[a-zA-Z]+$/))
     .max(12)
     .min(2)
     .required()
@@ -35,7 +35,7 @@ const signUp = Joi.object({
       "any.required": `"first Name" is a required field`,
     }),
   lastName: Joi.string()
-    .regex(RegExp(/^[a-z]+$/))
+    .regex(RegExp(/^[a-zA-Z]+$/))
     .max(12)
     .min(2)
     .required()
@@ -80,7 +80,7 @@ const signUp = Joi.object({
 });
 const updateUser = Joi.object({
   first_name: Joi.string()
-    .regex(RegExp(/^[a-z]+$/))
+    .regex(RegExp(/^[a-zA-Z]+$/))
     .max(12)
     .min(2)
     .messages({
@@ -91,7 +91,7 @@ const updateUser = Joi.object({
       "any.required": `"first Name" is a required field`,
     }),
   last_name: Joi.string()
-    .regex(RegExp(/^[a-z]+$/))
+    .regex(RegExp(/^[a-zA-Z]+$/))
     .max(12)
     .min(2)
     .messages({

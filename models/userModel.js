@@ -26,6 +26,16 @@ const user_schema = new mongoose.Schema({
   bio: {
     type: String,
   },
+  adopted: [
+    {
+      type: String,
+    },
+  ],
+  saved: [
+    {
+      type: Object,
+    },
+  ],
 });
 
 const Users = mongoose.model("users", user_schema);

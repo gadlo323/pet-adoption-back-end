@@ -224,6 +224,7 @@ const search_type = (req, res) => {
       .send("There seems to be a server problem! Please try again later.");
   }
 };
+
 const search_advance = (req, res) => {
   try {
     pets.find(
@@ -243,6 +244,74 @@ const search_advance = (req, res) => {
   }
 };
 
+const adopet_foster = (req, res) => {
+  const { id } = req.params;
+  const petId = req.body.data._id;
+  const type = req.body.type;
+  try {
+    users.findOneAndUpdate(
+      { _id: id },
+      { $push: { adopted: req.body.data } },
+      { useFindAndModify: false },
+      async (err, data) => {
+        if (err) res.status(400).send(err);
+        const success = await updatePetStatus(petId, type);
+        if (success) {
+          res.send(success);
+        }
+      }
+    );
+  } catch (err) {
+    res
+      .status(500)
+      .send("There seems to be a server problem! Please try again later.");
+  }
+};
+
+const save_pet = (req, res) => {
+  const { id } = req.params;
+  try {
+    users.findOneAndUpdate(
+      { _id: id },
+      { $push: { saved: req.body } },
+      { useFindAndModify: false },
+      async (err, data) => {
+        if (err) res.status(400).send(err);
+        if (data) {
+          res.send(true);
+        }
+      }
+    );
+  } catch (err) {
+    res
+      .status(500)
+      .send("There seems to be a server problem! Please try again later.");
+  }
+};
+
+const updatePetStatus = (id, type) => {
+  try {
+    pets.findOneAndUpdate(
+      { _id: id },
+      { status: `${type}` },
+      { useFindAndModify: false },
+      (err, data) => {
+        if (err)
+          res
+            .status(400)
+            .send(
+              "There seems to be a problem.The update was not successful.Please try again later."
+            );
+      }
+    );
+    return true;
+  } catch (err) {
+    res
+      .status(500)
+      .send("There seems to be a server problem! Please try again later.");
+  }
+};
+
 module.exports = {
   sign_up,
   sign_in,
@@ -253,4 +322,6 @@ module.exports = {
   get_pet,
   search_type,
   search_advance,
+  adopet_foster,
+  save_pet,
 };

@@ -23,6 +23,11 @@ router.get("/user/:id", petControllar.get_user);
 router.get("/pet/:id", petControllar.get_pet);
 
 router.post("/searchType", petControllar.search_type);
+
 router.post("/searchAdvance", petControllar.search_advance);
+
+router.post("/adopteFoster/:id", petControllar.adopet_foster);
+
+router.post("/savePet/:id", petControllar.save_pet);
 
 module.exports = router;
