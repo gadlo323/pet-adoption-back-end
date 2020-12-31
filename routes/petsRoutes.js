@@ -32,4 +32,6 @@ router.post("/adopteFoster/:id", petControllar.adopet_foster);
 
 router.post("/savePet/:id", petControllar.save_pet);
 
+router.delete("/returnPet/", petControllar.return_pet);
+
 module.exports = router;

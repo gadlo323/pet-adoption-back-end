@@ -245,7 +245,7 @@ const search_advance = (req, res) => {
 };
 
 const adopet_foster = (req, res) => {
-  // NOTE : save the pet id only no the all object
+  // ToDo : save the pet id only no the all object
   const { id } = req.params;
   const petId = req.body.data._id;
   const type = req.body.type;
@@ -314,6 +314,29 @@ const my_pets = (req, res) => {
   } catch (err) {}
 };
 
+const return_pet = (req, res) => {
+  // ToDo : save the pet id only no the all object
+  const { uId, petid } = req.query;
+  const type = "Available";
+  try {
+    users.updateOne(
+      { _id: uId },
+      { $pullAll: { adopted: [petid] } },
+      async (err, data) => {
+        if (err) res.status(400).send(err);
+        const success = await updatePetStatus(petid, type);
+        if (success) {
+          res.send(success);
+        }
+      }
+    );
+  } catch (err) {
+    res
+      .status(500)
+      .send("There seems to be a server problem! Please try again later.");
+  }
+};
+
 const updatePetStatus = (id, type) => {
   try {
     pets.findOneAndUpdate(
@@ -360,4 +383,5 @@ module.exports = {
   adopet_foster,
   save_pet,
   my_pets,
+  return_pet,
 };
