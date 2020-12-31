@@ -1,6 +1,7 @@
 const express = require("express");
 require("dotenv").config();
-const routes = require("./routes/petsRoutes");
+const petsRoutes = require("./routes/petsRoutes");
+const userRoutes = require("./routes/userRoutes");
 const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -25,6 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
 //fire router
-app.use("/", routes);
+app.use("/", petsRoutes);
+app.use("/", userRoutes);
 
 app.listen(port, () => console.log(`listen in : http://localhost:${port}`));

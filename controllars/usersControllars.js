@@ -1,8 +1,7 @@
 const bcrypt = require("bcrypt");
 const users = require("../models/userModel");
 const pets = require("../models/petsModel");
-const cloudinary = require("../utils/cloudinary");
-const { signIn, signUp, updateUser, addPet } = require("../utils/validations");
+const { signIn, signUp, updateUser } = require("../utils/validations");
 const { createToken, verifyToken } = require("../utils/auth");
 
 const sign_up = async (req, res, next) => {
@@ -149,101 +148,6 @@ const get_user = (req, res) => {
   });
 };
 
-const add_pet = async (req, res) => {
-  const { originalname, path } = req.file;
-  let petData = JSON.parse(req.body.data);
-  const { error } = addPet.validate(petData);
-  if (error) return res.status(400).send(error.details[0].message);
-  const hypoallergenic = petData.hypoallergenic == "true";
-  try {
-    // Upload image to cloudinary
-    const result = await cloudinary.uploader.upload(path, {
-      folder: "pets_project",
-      use_filename: true,
-    });
-    const newpet = new pets({
-      type: petData.type,
-      name: petData.name,
-      hypoallergenic: hypoallergenic,
-      status: petData.status ? petData.status : "Available",
-      height: +petData.height,
-      weight: +petData.weight,
-      breed: petData.breed,
-      color: petData.color,
-      dietary: petData.dietary,
-      bio: petData.bio,
-      image_url: result.secure_url,
-      image_name: originalname,
-      cloudinary_id: result.public_id,
-    });
-    newpet.save((err, saveData) => {
-      if (err) return res.status(500).send(err.message);
-      else return res.send(true);
-    });
-  } catch (err) {
-    res
-      .status(500)
-      .send("There seems to be a server problem! Please try again later.");
-  }
-};
-
-const get_pet = (req, res) => {
-  try {
-    const { id } = req.params;
-    pets.findOne({ _id: id }, (err, data) => {
-      if (err)
-        return res
-          .status(500)
-          .send(
-            "Oops There seems to be a server problem! Please try again later. "
-          );
-      else {
-        res.json(data);
-      }
-    });
-  } catch (err) {
-    res
-      .status(500)
-      .send("There seems to be a server problem! Please try again later.");
-  }
-};
-
-const search_type = (req, res) => {
-  try {
-    pets.find(
-      req.body,
-      "name status type height weight image_url image_name",
-      (err, data) => {
-        if (err) res.status(400).send(`no type of ${query} is avilable`);
-        res.json(data);
-      }
-    );
-  } catch (err) {
-    res
-      .status(500)
-      .send("There seems to be a server problem! Please try again later.");
-  }
-};
-
-const search_advance = (req, res) => {
-  try {
-    pets.find(
-      {
-        $and: [req.body],
-      },
-      "name status type height weight image_url image_name",
-      (err, data) => {
-        if (err) res.status(400).send(`no type of ${query} is avilable`);
-        res.json(data);
-      }
-    );
-  } catch (err) {
-    res
-      .status(500)
-      .send("There seems to be a server problem! Please try again later.");
-  }
-};
-
 const adopet_foster = (req, res) => {
   // ToDo : save the pet id only no the all object
   const { id } = req.params;
@@ -373,13 +277,9 @@ const resolve_data = async (data) => {
 module.exports = {
   sign_up,
   sign_in,
-  add_pet,
   token_valid,
   user_update,
   get_user,
-  get_pet,
-  search_type,
-  search_advance,
   adopet_foster,
   save_pet,
   my_pets,

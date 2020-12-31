@@ -1,37 +1,20 @@
 const router = require("express").Router();
-const petControllar = require("../controllars/adoptionCon");
+const petControllar = require("../controllars/petsControllars");
 const upload = require("../utils/multer");
-const { verifyToken } = require("../utils/auth");
 const { isAdmin } = require("../utils/auth");
 
-router.post("/signup", petControllar.sign_up);
-
-router.post("/login", petControllar.sign_in);
-
+// ADMIN :Edit Pet API
 router.post(
   "/addpet",
   isAdmin,
   upload.single("petImage"),
   petControllar.add_pet
 );
-router.post("/user/tokenValid", petControllar.token_valid);
 
-router.patch("/user/:id", petControllar.user_update);
-
-router.get("/user/:id", petControllar.get_user);
-
+//Get Pet By ID API
 router.get("/pet/:id", petControllar.get_pet);
 
-router.get("/myPets/:id", petControllar.my_pets);
-
-router.post("/searchType", petControllar.search_type);
-
-router.post("/searchAdvance", petControllar.search_advance);
-
-router.post("/adopteFoster/:id", petControllar.adopet_foster);
-
-router.post("/savePet/:id", petControllar.save_pet);
-
-router.delete("/returnPet/", petControllar.return_pet);
+//Get Pets API
+router.post("/search", petControllar.search);
 
 module.exports = router;
