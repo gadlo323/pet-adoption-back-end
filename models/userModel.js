@@ -28,7 +28,7 @@ const user_schema = new mongoose.Schema({
   },
   adopted: [
     {
-      type: String,
+      type: Object,
     },
   ],
   saved: [

@@ -245,13 +245,14 @@ const search_advance = (req, res) => {
 };
 
 const adopet_foster = (req, res) => {
+  // NOTE : save the pet id only no the all object
   const { id } = req.params;
   const petId = req.body.data._id;
   const type = req.body.type;
   try {
     users.findOneAndUpdate(
       { _id: id },
-      { $push: { adopted: req.body.data } },
+      { $push: { adopted: petId } },
       { useFindAndModify: false },
       async (err, data) => {
         if (err) res.status(400).send(err);
@@ -273,7 +274,7 @@ const save_pet = (req, res) => {
   try {
     users.findOneAndUpdate(
       { _id: id },
-      { $push: { saved: req.body } },
+      { $push: { saved: req.body._id } },
       { useFindAndModify: false },
       async (err, data) => {
         if (err) res.status(400).send(err);
@@ -287,6 +288,30 @@ const save_pet = (req, res) => {
       .status(500)
       .send("There seems to be a server problem! Please try again later.");
   }
+};
+
+const my_pets = (req, res) => {
+  let savedPets = [];
+  let ownedPets = [];
+  try {
+    const { id } = req.params;
+    users.findOne({ _id: id }, "adopted saved", async (err, data) => {
+      if (err)
+        return res
+          .status(500)
+          .send(
+            "Oops There seems to be a server problem! Please try again later. "
+          );
+      else {
+        const result = await resolve_data(data);
+        result.forEach((item) => {
+          if (item.status === "Available") savedPets.push(item);
+          else ownedPets.push(item);
+        });
+        res.json({ adopted: ownedPets, saved: savedPets });
+      }
+    });
+  } catch (err) {}
 };
 
 const updatePetStatus = (id, type) => {
@@ -312,6 +337,16 @@ const updatePetStatus = (id, type) => {
   }
 };
 
+const resolve_data = async (data) => {
+  const combainData = [...data.adopted, ...data.saved];
+  try {
+    const dbData = await pets.find({ _id: combainData }).exec();
+    return dbData;
+  } catch (err) {
+    return err;
+  }
+};
+
 module.exports = {
   sign_up,
   sign_in,
@@ -324,4 +359,5 @@ module.exports = {
   search_advance,
   adopet_foster,
   save_pet,
+  my_pets,
 };
