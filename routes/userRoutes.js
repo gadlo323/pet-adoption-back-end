@@ -24,6 +24,9 @@ router.post("/adopteFoster/:id", userControllar.adopet_foster);
 //Save Pet API
 router.post("/savePet/:id", userControllar.save_pet);
 
+//delete Save Pet API
+router.delete("/deletesavepet", userControllar.remove_save_pet);
+
 //Return Pet API
 router.post("/returnPet/", userControllar.return_pet);
 

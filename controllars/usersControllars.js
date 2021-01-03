@@ -194,6 +194,25 @@ const save_pet = (req, res) => {
   }
 };
 
+const remove_save_pet = (req, res) => {
+  const { uId, petid } = req.query;
+  console.log(uId, petid);
+  try {
+    users.updateOne(
+      { _id: uId },
+      { $pullAll: { saved: [petid] } },
+      async (err, data) => {
+        if (err) res.status(400).send(err);
+        if (data) res.send(true);
+      }
+    );
+  } catch (err) {
+    res
+      .status(500)
+      .send("There seems to be a server problem! Please try again later.");
+  }
+};
+
 const my_pets = (req, res) => {
   let savedPets = [];
   let ownedPets = [];
@@ -215,11 +234,16 @@ const my_pets = (req, res) => {
         res.json({ adopted: ownedPets, saved: savedPets });
       }
     });
-  } catch (err) {}
+  } catch (err) {
+    res
+      .status(500)
+      .send(
+        "There seems to be a server problem! Please try again later." + err
+      );
+  }
 };
 
 const return_pet = (req, res) => {
-  // ToDo : save the pet id only no the all object
   const { uId, petid } = req.query;
   const type = "Available";
   try {
@@ -241,6 +265,7 @@ const return_pet = (req, res) => {
   }
 };
 
+//TODO: separate into another file
 const updatePetStatus = (id, type) => {
   try {
     pets.findOneAndUpdate(
@@ -282,6 +307,7 @@ module.exports = {
   get_user,
   adopet_foster,
   save_pet,
+  remove_save_pet,
   my_pets,
   return_pet,
 };
