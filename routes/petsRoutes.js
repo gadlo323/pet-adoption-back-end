@@ -3,7 +3,9 @@ const petControllar = require("../controllars/petsControllars");
 const upload = require("../utils/multer");
 const { isAdmin } = require("../utils/auth");
 
-// ADMIN :Edit Pet API
+//Todo : edit pet api
+
+// ADMIN :add Pet API
 router.post(
   "/addpet",
   isAdmin,
@@ -15,6 +17,6 @@ router.post(
 router.get("/pet/:id", petControllar.get_pet);
 
 //Get Pets API
-router.post("/search", petControllar.search);
+router.post("/search/", petControllar.search);
 
 module.exports = router;

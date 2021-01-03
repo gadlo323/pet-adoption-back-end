@@ -133,19 +133,55 @@ const user_update = async (req, res) => {
   }
 };
 
+//full
+const get_user_full = (req, res) => {
+  const { id } = req.params;
+  try {
+    users.findOne({ _id: id }, (err, data) => {
+      if (err)
+        return res
+          .status(500)
+          .send(
+            "Oops There seems to be a server problem! Please try again later. "
+          );
+      else {
+        res.json(data);
+      }
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .send("There seems to be a server problem! Please try again later.");
+  }
+};
+
 const get_user = (req, res) => {
   const { id } = req.params;
-  users.findOne({ _id: id }, (err, data) => {
-    if (err)
-      return res
-        .status(500)
-        .send(
-          "Oops There seems to be a server problem! Please try again later. "
-        );
-    else {
-      res.json(data);
-    }
-  });
+  try {
+    users.findOne(
+      { _id: id },
+      "first_name last_name email phone saved adopted",
+      async (err, data) => {
+        if (err)
+          return res
+            .status(500)
+            .send(
+              "Oops There seems to be a server problem! Please try again later. "
+            );
+        else {
+          const result = await resolve_data(data);
+          const resultFilter = result.filter((item) => {
+            return item.status !== "Available";
+          });
+          res.json({ info: data, owned: resultFilter });
+        }
+      }
+    );
+  } catch (err) {
+    res
+      .status(500)
+      .send("There seems to be a server problem! Please try again later.");
+  }
 };
 
 const adopet_foster = (req, res) => {
@@ -265,6 +301,24 @@ const return_pet = (req, res) => {
   }
 };
 
+const get_users = (req, res) => {
+  try {
+    users.find({ role: "1" }, "first_name last_name", (err, data) => {
+      if (err)
+        return res
+          .status(500)
+          .send(
+            "Oops There seems to be a server problem! Please try again later. "
+          );
+      res.json(data);
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .send("There seems to be a server problem! Please try again later.");
+  }
+};
+
 //TODO: separate into another file
 const updatePetStatus = (id, type) => {
   try {
@@ -305,9 +359,11 @@ module.exports = {
   token_valid,
   user_update,
   get_user,
+  get_user_full,
   adopet_foster,
   save_pet,
   remove_save_pet,
   my_pets,
   return_pet,
+  get_users,
 };
