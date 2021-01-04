@@ -1,3 +1,4 @@
+const { json } = require("body-parser");
 const pets = require("../models/petsModel");
 const cloudinary = require("../utils/cloudinary");
 const { addPet } = require("../utils/validations");
@@ -42,44 +43,39 @@ const add_pet = async (req, res) => {
 
 //Todo : edit pet data
 const edit_pet = async (req, res) => {
+  const { id, cloudId } = req.query;
   try {
-    const { id } = req.params;
-    const data = req.body;
-    const { error } = updateUser.validate(data);
+    const data = JSON.parse(req.body.data);
+    const hypoallergenic = data.hypoallergenic == "true";
+    const { error } = addPet.validate(data);
     if (error) return res.status(400).send(error.details[0].message);
-    //cheack the algo after 2 submit of email exsicte is return error
-
-    let exsicte = false;
-    if (updateUser.email) {
-      await users.findOne({ email: updateUser.email }, (err, userExsicte) => {
+    data.hypoallergenic = hypoallergenic;
+    if (req.file) {
+      const { originalname, path } = req.file;
+      await cloudinary.uploader.destroy(cloudId);
+      // Upload image to cloudinary
+      const result = await cloudinary.uploader.upload(path, {
+        folder: "pets_project",
+        use_filename: true,
+      });
+      data.image_url = result.secure_url;
+      data.image_name = originalname;
+      data.cloudinary_id = result.public_id;
+    }
+    pets.findOneAndUpdate(
+      { _id: id },
+      data,
+      { useFindAndModify: false },
+      (err, data) => {
         if (err)
           res
-            .status(500)
+            .status(400)
             .send(
-              "Oops There seems to be a server problem! Please try again later. "
+              "There seems to be a problem.The update was not successful.Please try again later."
             );
-        if (userExsicte) {
-          exsicte = true;
-          return res.status(400).send("That email is already in use!");
-        }
-      });
-    }
-    if (!exsicte) {
-      users.findOneAndUpdate(
-        { _id: id },
-        data,
-        { useFindAndModify: false },
-        (err, data) => {
-          if (err)
-            res
-              .status(400)
-              .send(
-                "There seems to be a problem.The update was not successful.Please try again later."
-              );
-          res.json(true);
-        }
-      );
-    }
+        res.json(true);
+      }
+    );
   } catch (err) {
     res.status(500).send("oops server shot dwon");
   }
@@ -149,6 +145,7 @@ const search = (req, res) => {
 
 module.exports = {
   add_pet,
+  edit_pet,
   get_pet,
   search,
 };

@@ -3,14 +3,19 @@ const petControllar = require("../controllars/petsControllars");
 const upload = require("../utils/multer");
 const { isAdmin } = require("../utils/auth");
 
-//Todo : edit pet api
-
 // ADMIN :add Pet API
 router.post(
   "/addpet",
   isAdmin,
   upload.single("petImage"),
   petControllar.add_pet
+);
+// ADMIN :edit Pet API
+router.patch(
+  "/editpet/",
+  isAdmin,
+  upload.single("petImage"),
+  petControllar.edit_pet
 );
 
 //Get Pet By ID API
