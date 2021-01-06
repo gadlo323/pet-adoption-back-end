@@ -302,6 +302,9 @@ const return_pet = (req, res) => {
 };
 
 const get_users = (req, res) => {
+  const { per_page, page } = req.query;
+  const startIndex = (page - 1) * per_page;
+  const endIndex = page * per_page;
   try {
     users.find({ role: "1" }, "first_name last_name", (err, data) => {
       if (err)
@@ -310,7 +313,8 @@ const get_users = (req, res) => {
           .send(
             "Oops There seems to be a server problem! Please try again later. "
           );
-      res.json(data);
+      const result = data.slice(startIndex, endIndex);
+      res.json({ result: result, data: data });
     });
   } catch (err) {
     res

@@ -41,7 +41,6 @@ const add_pet = async (req, res) => {
   }
 };
 
-//Todo : edit pet data
 const edit_pet = async (req, res) => {
   const { id, cloudId } = req.query;
   try {
@@ -53,7 +52,6 @@ const edit_pet = async (req, res) => {
     if (req.file) {
       const { originalname, path } = req.file;
       await cloudinary.uploader.destroy(cloudId);
-      // Upload image to cloudinary
       const result = await cloudinary.uploader.upload(path, {
         folder: "pets_project",
         use_filename: true,
@@ -124,24 +122,6 @@ const search = (req, res) => {
       .send("There seems to be a server problem! Please try again later.");
   }
 };
-// const search = (req, res) => {
-//   try {
-//     pets.find(
-//       {
-//         $and: [req.body],
-//       },
-//       "name status type height weight image_url image_name",
-//       (err, data) => {
-//         if (err) res.status(400).send(`no type of ${query} is avilable`);
-//         res.json(data);
-//       }
-//     );
-//   } catch (err) {
-//     res
-//       .status(500)
-//       .send("There seems to be a server problem! Please try again later.");
-//   }
-// };
 
 module.exports = {
   add_pet,

@@ -34,7 +34,7 @@ router.delete("/deletesavepet/", userControllar.remove_save_pet);
 //Return Pet API
 router.post("/returnPet/", userControllar.return_pet);
 
-//users list API
-router.get("/getusers", isAdmin, userControllar.get_users);
+//get users  API
+router.get("/getusers/", isAdmin, userControllar.get_users);
 
 module.exports = router;

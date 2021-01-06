@@ -19,7 +19,9 @@ mongoose
     console.log("Connection to the db is successful!");
   })
   .catch((err) => console.error(err));
+
 //static files(css,js)& middleware
+
 app.use(express.static("./public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
