@@ -40,6 +40,7 @@ const pet_schema = new mongoose.Schema({
   },
   bio: {
     type: String,
+    required: "Please supply bio",
   },
   image_name: {
     type: String,

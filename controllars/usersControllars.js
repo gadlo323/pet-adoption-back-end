@@ -41,22 +41,23 @@ const sign_up = async (req, res, next) => {
 };
 
 const sign_in = async (req, res) => {
-  const { email, password } = req.body;
-  const { error } = signIn.validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-  users.findOne({ email: email }, async (err, userFound) => {
-    if (err) return res.status(400).send("Password or Email are incorrect !");
-    if (!userFound) {
-      return res.status(400).send("The username does not exist");
-    }
-    if (!bcrypt.compareSync(password, userFound.password)) {
-      return res
-        .status(400)
-        .send({ message: "Password or Email are incorrect !" });
-    }
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
-    if (token) {
+  try {
+    const { email, password } = req.body;
+    const { error } = signIn.validate(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+    users.findOne({ email: email }, async (err, userFound) => {
+      if (err) return res.status(400).send("Password or Email are incorrect !");
+      if (!userFound) {
+        return res.status(400).send("The username does not exist");
+      }
+      if (!bcrypt.compareSync(password, userFound.password)) {
+        return res
+          .status(400)
+          .send({ message: "Password or Email are incorrect !" });
+      }
+      const authHeader = req.headers["authorization"];
+      const token = authHeader && authHeader.split(" ")[1];
+
       const tokenPayload = {
         uId: userFound._id,
         name: userFound.first_name + " " + userFound.last_name,
@@ -64,14 +65,12 @@ const sign_in = async (req, res) => {
       };
       const newToken = createToken(tokenPayload);
       return res.send(newToken);
-    } else {
-      const verifyUid = await verifyToken(token);
-      // validate user who she/he claims to be
-      if (userFound._id !== verifyUid)
-        return res.status(403).send({ error: "wrong credentials" });
-    }
-    return res.send(userFound);
-  });
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .send("There seems to be a server problem! Please try again later.");
+  }
 };
 
 const token_valid = async (req, res) => {

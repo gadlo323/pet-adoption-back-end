@@ -1,7 +1,7 @@
 const { json } = require("body-parser");
 const pets = require("../models/petsModel");
 const cloudinary = require("../utils/cloudinary");
-const { addPet } = require("../utils/validations");
+const { addPet, searchPet } = require("../utils/validations");
 
 const add_pet = async (req, res) => {
   const { originalname, path } = req.file;
@@ -105,6 +105,8 @@ const search = (req, res) => {
   const startIndex = (page - 1) * per_page;
   const endIndex = page * per_page;
   try {
+    const { error } = searchPet.validate(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
     pets.find(
       {
         $and: [req.body],

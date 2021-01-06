@@ -21,6 +21,7 @@ const signIn = Joi.object({
       "any.required": `email is a required field`,
     }),
 });
+
 const signUp = Joi.object({
   firstName: Joi.string()
     .regex(RegExp(/^[a-zA-Z]+$/))
@@ -78,6 +79,7 @@ const signUp = Joi.object({
     }),
   repatePass: Joi.ref("password"),
 });
+
 const updateUser = Joi.object({
   first_name: Joi.string()
     .regex(RegExp(/^[a-zA-Z]+$/))
@@ -237,9 +239,46 @@ const addPet = Joi.object({
     }),
 });
 
+const searchPet = Joi.object({
+  type: Joi.string()
+    .max(12)
+    .min(2)
+    .regex(RegExp(/^[a-zA-Z\s]+$/))
+    .messages({
+      "string.min": `"type" should have a minimum length of 2`,
+      "string.max": `"type" should have a maximum length of 12`,
+    }),
+  name: Joi.string()
+    .max(12)
+    .min(2)
+    .regex(RegExp(/^[a-zA-Z\s]+$/))
+    .messages({
+      "string.min": `"name" should have a minimum length of 2`,
+      "string.max": `"name" should have a maximum length of 12`,
+    }),
+  status: Joi.string()
+    .max(12)
+    .min(2)
+    .regex(RegExp(/^[a-zA-Z]+$/))
+    .messages({
+      "string.min": `"status" should have a minimum length of 2`,
+      "string.max": `"status" should have a maximum length of 12`,
+    }),
+
+  height: Joi.number().max(250).min(10).messages({
+    "string.min": `"type" should have a minimum length of 10`,
+    "string.max": `"type" should have a maximum length of 400`,
+  }),
+  weight: Joi.number().max(200).min(0).messages({
+    "string.max": `"weight" should have a maximum length of 300`,
+    "string.min": `"weight" should have a maximum length of 0`,
+  }),
+});
+
 module.exports = {
   signIn,
   signUp,
   updateUser,
   addPet,
+  searchPet,
 };
