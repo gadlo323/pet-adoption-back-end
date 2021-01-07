@@ -51,6 +51,12 @@ const pet_schema = new mongoose.Schema({
   cloudinary_id: {
     type: String,
   },
+  fostredById: {
+    type: String,
+  },
+  adoptedById: {
+    type: String,
+  },
 });
 
 const Pets = mongoose.model("pets", pet_schema);

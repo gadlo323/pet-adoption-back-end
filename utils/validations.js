@@ -83,24 +83,23 @@ const signUp = Joi.object({
 const updateUser = Joi.object({
   first_name: Joi.string()
     .regex(RegExp(/^[a-zA-Z]+$/))
-    .max(12)
+    .max(15)
     .min(2)
     .messages({
       "string.base": `"first Name" should be a type of 'text'`,
       "string.empty": `"first Name" cannot be an empty field`,
       "string.min": `"first Name" should have a minimum length of 2`,
-      "string.max": `"first Name" should have a maximum length of 12`,
-      "any.required": `"first Name" is a required field`,
+      "string.max": `"first Name" should have a maximum length of 15`,
     }),
   last_name: Joi.string()
     .regex(RegExp(/^[a-zA-Z]+$/))
-    .max(12)
+    .max(15)
     .min(2)
     .messages({
       "string.base": `"last Name" should be a type of 'text'`,
       "string.empty": `"last Name" cannot be an empty field`,
       "string.min": `"last Name" should have a minimum length of 2`,
-      "string.max": `"last Name" should have a maximum length of 12`,
+      "string.max": `"last Name" should have a maximum length of 15`,
       "any.required": `"last Name" is a required field`,
     }),
 
@@ -118,8 +117,7 @@ const updateUser = Joi.object({
       tlds: { allow: ["com", "net"] },
     })
     .messages({
-      "string.empty": `email cannot be an empty field`,
-      "any.required": `email is a required field`,
+      "string.regex": `email is in use`,
     }),
 
   password: Joi.string()
@@ -130,35 +128,35 @@ const updateUser = Joi.object({
       "string.empty": `password cannot be an empty field`,
       "any.required": `password is a required field`,
     }),
-  bio: Joi.string().max(120).min(5).messages({
+  password_repeat: Joi.ref("password"),
+  bio: Joi.string().max(140).min(2).messages({
     "string.empty": `bio cannot be an empty field`,
     "string.min": `"bio" should have a minimum length of 2`,
-    "string.max": `"bio" should have a maximum length of 12`,
-    "any.required": `bio is a required field`,
+    "string.max": `"bio" should have a maximum length of 140`,
   }),
 });
 
 const addPet = Joi.object({
   type: Joi.string()
-    .max(12)
+    .max(15)
     .min(2)
     .regex(RegExp(/^[a-zA-Z]+$/))
     .required()
     .messages({
       "string.empty": `type cannot be an empty field`,
       "string.min": `"type" should have a minimum length of 2`,
-      "string.max": `"type" should have a maximum length of 12`,
+      "string.max": `"type" should have a maximum length of 15`,
       "any.required": `type is a required field`,
     }),
   name: Joi.string()
-    .max(12)
+    .max(15)
     .min(2)
     .regex(RegExp(/^[a-zA-Z]+$/))
     .required()
     .messages({
       "string.empty": `name cannot be an empty field`,
       "string.min": `"name" should have a minimum length of 2`,
-      "string.max": `"name" should have a maximum length of 12`,
+      "string.max": `"name" should have a maximum length of 15`,
       "any.required": `name is a required field`,
     }),
   status: Joi.string()

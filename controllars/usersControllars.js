@@ -55,9 +55,6 @@ const sign_in = async (req, res) => {
           .status(400)
           .send({ message: "Password or Email are incorrect !" });
       }
-      const authHeader = req.headers["authorization"];
-      const token = authHeader && authHeader.split(" ")[1];
-
       const tokenPayload = {
         uId: userFound._id,
         name: userFound.first_name + " " + userFound.last_name,
@@ -97,21 +94,10 @@ const user_update = async (req, res) => {
     //cheack the algo after 2 submit of email exsicte is return error
 
     let exsicte = false;
-    if (updateUser.email) {
-      await users.findOne({ email: updateUser.email }, (err, userExsicte) => {
-        if (err)
-          res
-            .status(500)
-            .send(
-              "Oops There seems to be a server problem! Please try again later. "
-            );
-        if (userExsicte) {
-          exsicte = true;
-          return res.status(400).send("That email is already in use!");
-        }
-      });
-    }
-    if (!exsicte) {
+    if (data.email) {
+      exsicte = isEmail_exsicte(res, data.email);
+    } else if (!exsicte) {
+      if (data.password) data.password = await bcrypt.hash(data.password, 10);
       users.findOneAndUpdate(
         { _id: id },
         data,
@@ -133,20 +119,24 @@ const user_update = async (req, res) => {
 };
 
 //full
-const get_user_full = (req, res) => {
+const get_user = (req, res) => {
   const { id } = req.params;
   try {
-    users.findOne({ _id: id }, (err, data) => {
-      if (err)
-        return res
-          .status(500)
-          .send(
-            "Oops There seems to be a server problem! Please try again later. "
-          );
-      else {
-        res.json(data);
+    users.findOne(
+      { _id: id },
+      "first_name last_name email phone bio",
+      (err, data) => {
+        if (err)
+          return res
+            .status(500)
+            .send(
+              "Oops There seems to be a server problem! Please try again later. "
+            );
+        else {
+          res.json(data);
+        }
       }
-    });
+    );
   } catch (err) {
     res
       .status(500)
@@ -154,7 +144,7 @@ const get_user_full = (req, res) => {
   }
 };
 
-const get_user = (req, res) => {
+const get_user_full = (req, res) => {
   const { id } = req.params;
   try {
     users.findOne(
@@ -184,9 +174,9 @@ const get_user = (req, res) => {
 };
 
 const adopet_foster = (req, res) => {
-  // ToDo : save the pet id only no the all object
   const { id } = req.params;
   const petId = req.body.data._id;
+  const fostredById = req.body.data.fostredById;
   const type = req.body.type;
   try {
     users.findOneAndUpdate(
@@ -195,7 +185,16 @@ const adopet_foster = (req, res) => {
       { useFindAndModify: false },
       async (err, data) => {
         if (err) res.status(400).send(err);
-        const success = await updatePetStatus(petId, type);
+        const success = await updatePetStatus(res, id, petId, type);
+        if (fostredById) {
+          users.updateOne(
+            { _id: fostredById },
+            { $pullAll: { adopted: [petId] } },
+            (err, data) => {
+              if (err) res.status(400).send(err);
+            }
+          );
+        }
         if (success) {
           res.send(success);
         }
@@ -287,7 +286,7 @@ const return_pet = (req, res) => {
       { $pullAll: { adopted: [petid] } },
       async (err, data) => {
         if (err) res.status(400).send(err);
-        const success = await updatePetStatus(petid, type);
+        const success = await updatePetStatus(res, uId, petid, type);
         if (success) {
           res.send(success);
         }
@@ -323,7 +322,7 @@ const get_users = (req, res) => {
 };
 
 //TODO: separate into another file
-const updatePetStatus = (id, type) => {
+const updatePetStatus = (res, uId, id, type) => {
   try {
     pets.findOneAndUpdate(
       { _id: id },
@@ -338,6 +337,27 @@ const updatePetStatus = (id, type) => {
             );
       }
     );
+    if (type === "Fostered") {
+      pets.findOneAndUpdate(
+        { _id: id },
+        { fostredById: uId },
+        { useFindAndModify: false },
+        async (err, data) => {
+          if (err) res.status(400).send(err);
+        }
+      );
+    }
+    if (type === "Adopted" || type === "Available") {
+      pets.findOneAndUpdate(
+        { _id: id },
+        { fostredById: "" },
+        { useFindAndModify: false },
+        async (err, data) => {
+          if (err) res.status(400).send(err);
+        }
+      );
+    }
+
     return true;
   } catch (err) {
     res
@@ -354,6 +374,22 @@ const resolve_data = async (data) => {
   } catch (err) {
     return err;
   }
+};
+
+const isEmail_exsicte = (res, email) => {
+  users.findOne({ email: email }, (err, userExsicte) => {
+    if (err)
+      res
+        .status(500)
+        .send(
+          "Oops There seems to be a server problem! Please try again later. "
+        );
+    if (userExsicte) {
+      return res.status(400).send("That email is already in use!");
+    } else {
+      return false;
+    }
+  });
 };
 
 module.exports = {
