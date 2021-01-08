@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const users = require("../models/userModel");
 const pets = require("../models/petsModel");
 const { signIn, signUp, updateUser } = require("../utils/validations");
-const { createToken, verifyToken } = require("../utils/auth");
+const { createToken, verifyToken, maxAge } = require("../utils/auth");
 
 const sign_up = async (req, res, next) => {
   try {
@@ -30,7 +30,8 @@ const sign_up = async (req, res, next) => {
           name: savadata.first_name + " " + savadata.last_name,
         };
         const token = createToken(toketPayload);
-        res.send(token);
+        res.cookie("token", token, { httpOnly: false, maxAge: maxAge * 1000 });
+        res.status(201).json(toketPayload);
       }
     });
   } catch (err) {
@@ -41,48 +42,45 @@ const sign_up = async (req, res, next) => {
 };
 
 const sign_in = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const { error } = signIn.validate(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-    users.findOne({ email: email }, async (err, userFound) => {
-      if (err) return res.status(400).send("Password or Email are incorrect !");
-      if (!userFound) {
-        return res.status(400).send("The username does not exist");
-      }
-      if (!bcrypt.compareSync(password, userFound.password)) {
-        return res
-          .status(400)
-          .send({ message: "Password or Email are incorrect !" });
-      }
-      const tokenPayload = {
-        uId: userFound._id,
-        name: userFound.first_name + " " + userFound.last_name,
-        role: userFound.role,
-      };
-      const newToken = createToken(tokenPayload);
-      return res.send(newToken);
-    });
-  } catch (err) {
-    res
-      .status(500)
-      .send("There seems to be a server problem! Please try again later.");
-  }
+  const { email, password } = req.body;
+  //validate the input
+  const { error } = signIn.validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+  //search user in db
+  users.findOne({ email: email }, async (err, userFound) => {
+    if (err) return res.status(400).send("Password or Email are incorrect !");
+    if (!userFound) {
+      return res.status(400).send("The username does not exist");
+    }
+    if (!bcrypt.compareSync(password, userFound.password)) {
+      return res
+        .status(400)
+        .send({ message: "Password or Email are incorrect !" });
+    }
+    const tokenPayload = {
+      uId: userFound._id,
+      name: userFound.first_name + " " + userFound.last_name,
+      role: userFound.role,
+    };
+    const newToken = createToken(tokenPayload);
+    res.cookie("token", newToken, { httpOnly: false, maxAge: maxAge * 1000 });
+    return res.send(tokenPayload);
+  });
 };
 
 const token_valid = async (req, res) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  const { token } = req.cookies;
   if (token == null) {
     return res.status(401).send(false);
   }
 
   const userVerify = await verifyToken(token);
   if (!userVerify) {
-    return res.status(403).send(false);
+    console.log("error");
+    return res.status(403).send(userVerify);
   }
 
-  res.send(true);
+  res.send(token);
 };
 
 const user_update = async (req, res) => {
@@ -160,7 +158,7 @@ const get_user_full = (req, res) => {
         else {
           const result = await resolve_data(data);
           const resultFilter = result.filter((item) => {
-            return item.status !== "Available";
+            return item.status !== "available";
           });
           res.json({ info: data, owned: resultFilter });
         }
@@ -230,7 +228,7 @@ const save_pet = (req, res) => {
 
 const remove_save_pet = (req, res) => {
   const { uId, petid } = req.query;
-  console.log(uId, petid);
+
   try {
     users.updateOne(
       { _id: uId },
@@ -262,7 +260,7 @@ const my_pets = (req, res) => {
       else {
         const result = await resolve_data(data);
         result.forEach((item) => {
-          if (item.status === "Available") savedPets.push(item);
+          if (item.status === "available") savedPets.push(item);
           else ownedPets.push(item);
         });
         res.json({ adopted: ownedPets, saved: savedPets });
@@ -279,7 +277,7 @@ const my_pets = (req, res) => {
 
 const return_pet = (req, res) => {
   const { uId, petid } = req.query;
-  const type = "Available";
+  const type = "available";
   try {
     users.updateOne(
       { _id: uId },
@@ -337,7 +335,7 @@ const updatePetStatus = (res, uId, id, type) => {
             );
       }
     );
-    if (type === "Fostered") {
+    if (type === "fostered") {
       pets.findOneAndUpdate(
         { _id: id },
         { fostredById: uId },
@@ -347,7 +345,7 @@ const updatePetStatus = (res, uId, id, type) => {
         }
       );
     }
-    if (type === "Adopted" || type === "Available") {
+    if (type === "adopted" || type === "available") {
       pets.findOneAndUpdate(
         { _id: id },
         { fostredById: "" },

@@ -1,22 +1,30 @@
 require("dotenv").config();
 const users = require("../models/userModel");
 const jwt = require("jsonwebtoken");
+const maxAge = 1000;
+
 const createToken = (data) => {
-  return jwt.sign(data, process.env.ACCESS_TOKEN_SECRET);
+  return jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: maxAge,
+  });
 };
 
 const verifyToken = async (token) => {
-  try {
-    const payload = await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    return payload.uId;
-  } catch (err) {
-    return null;
-  }
+  return await jwt.verify(
+    token,
+    process.env.ACCESS_TOKEN_SECRET,
+    (err, decoded) => {
+      if (err) {
+        return false;
+      } else {
+        return decoded.uId;
+      }
+    }
+  );
 };
 
 const isAdmin = async (req, res, next) => {
-  const token = req.headers.authorization.split(" ")[1];
-
+  const { token } = req.cookies;
   const userId = await verifyToken(token);
 
   if (!userId) res.status(403).send("Error, Forbidden");
@@ -42,4 +50,4 @@ const userInfo = async (userId) => {
   });
 };
 
-module.exports = { createToken, verifyToken, isAdmin };
+module.exports = { createToken, verifyToken, isAdmin, maxAge };

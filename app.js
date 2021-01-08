@@ -2,6 +2,7 @@ const express = require("express");
 require("dotenv").config();
 const petsRoutes = require("./routes/petsRoutes");
 const userRoutes = require("./routes/userRoutes");
+const cookieParser = require("cookie-parser");
 const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -25,7 +26,13 @@ mongoose
 app.use(express.static("./public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
+app.use(cookieParser());
 
 //fire router
 app.use("/", petsRoutes);

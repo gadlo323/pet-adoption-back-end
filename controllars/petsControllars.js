@@ -16,14 +16,14 @@ const add_pet = async (req, res) => {
       use_filename: true,
     });
     const newpet = new pets({
-      type: petData.type,
-      name: petData.name,
+      type: petData.type.toLowerCase(),
+      name: petData.name.toLowerCase(),
       hypoallergenic: hypoallergenic,
       status: petData.status ? petData.status : "Available",
       height: +petData.height,
       weight: +petData.weight,
-      breed: petData.breed,
-      color: petData.color,
+      breed: petData.breed.toLowerCase(),
+      color: petData.color.toLowerCase(),
       dietary: petData.dietary,
       bio: petData.bio,
       image_url: result.secure_url,
@@ -104,12 +104,13 @@ const search = (req, res) => {
   const { per_page, page } = req.query;
   const startIndex = (page - 1) * per_page;
   const endIndex = page * per_page;
+  const data = JSON.parse(JSON.stringify(req.body).toLowerCase());
   try {
     const { error } = searchPet.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
     pets.find(
       {
-        $and: [req.body],
+        $and: [data],
       },
       "name status type height weight image_url image_name",
       (err, data) => {
