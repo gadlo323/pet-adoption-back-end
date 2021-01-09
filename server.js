@@ -25,7 +25,7 @@ mongoose
 const origins = [
   "http://localhost:5000", // Production Build
   "https://adoptfriend.herokuapp.com",
-  "https://adoptefriend.netlify.app",
+  "https://adoptefriend.netlify.app/",
 ];
 //static files& middleware
 app.set("trust proxy", 1);
@@ -36,7 +36,6 @@ app.use(
   cors({
     credentials: true,
     origin: origins,
-    sameSite: "none",
   })
 );
 app.use(cookieParser());
