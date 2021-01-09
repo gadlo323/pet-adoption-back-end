@@ -28,9 +28,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
-    origin: "https://adoptefriend.netlify.app",
-    "Access-Control-Allow-Origin": "*",
     credentials: true,
+    origin: true,
+    "Access-Control-Allow-Origin": "*",
   })
 );
 app.use(cookieParser());
