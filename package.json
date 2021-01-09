@@ -4,10 +4,11 @@
   "description": "pet adoption platform",
   "main": "index.js",
   "engines": {
+    "npm": "6.14.16",
     "node": "12.18.4" 
   },
   "scripts": {
-    "start": "server.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
