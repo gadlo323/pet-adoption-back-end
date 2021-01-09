@@ -22,7 +22,10 @@ mongoose
   .catch((err) => console.error(err));
 
 //static files(css,js)& middleware
-app.set("trust proxy", 1); // trust first proxy
+if (app.get("env") === "production") {
+  app.set("trust proxy", 1); // trust first proxy
+  sess.cookie.secure = true; // serve secure cookies
+}
 app.use(express.static("./public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
