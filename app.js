@@ -7,7 +7,7 @@ const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
 const port = process.env.PORT || 5000;
-const mongo_url = `mongodb+srv://${process.env.MONGO_ADMIN_USER}:${process.env.MONGO_ADMIN_PASSWORD}@petsproject.grr82.mongodb.net/pets_adoption?retryWrites=true&w=majority`;
+const mongo_url = process.env.MONGO_CONNECT;
 
 mongoose
   .connect(
@@ -38,4 +38,4 @@ app.use(cookieParser());
 app.use("/", petsRoutes);
 app.use("/", userRoutes);
 
-app.listen(port, () => console.log(`listen in : http://localhost:${port}`));
+app.listen(port, () => console.log(`listen in port:${port}`));

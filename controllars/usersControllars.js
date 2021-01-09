@@ -76,7 +76,6 @@ const token_valid = async (req, res) => {
 
   const userVerify = await verifyToken(token);
   if (!userVerify) {
-    console.log("error");
     return res.status(403).send(userVerify);
   }
 
