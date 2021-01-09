@@ -35,11 +35,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
     credentials: true,
-    origin: origins,
-    "Set-Cookie": "gippea-third-party=true",
-    "Cache-Control": "no-cache",
-    "Content-Type": "text/html",
-    "Access-Control-Allow-Origin": "*",
+    origin: true,
   })
 );
 app.use(cookieParser());
