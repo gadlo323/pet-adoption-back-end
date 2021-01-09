@@ -36,6 +36,7 @@ app.use(
   cors({
     credentials: true,
     origin: origins,
+    sameSite: "none",
   })
 );
 app.use(cookieParser());
