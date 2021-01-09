@@ -4,6 +4,7 @@ const petsRoutes = require("./routes/petsRoutes");
 const userRoutes = require("./routes/userRoutes");
 const cookieParser = require("cookie-parser");
 const app = express();
+const csurf = require("csurf");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const port = process.env.PORT || 5000;
@@ -28,6 +29,7 @@ const origins = [
   "https://adoptefriend.netlify.app",
 ];
 //static files& middleware
+app.use(csurf({ cookie: true }));
 app.set("trust proxy", 1);
 app.use(express.static("./public"));
 app.use(express.json());
