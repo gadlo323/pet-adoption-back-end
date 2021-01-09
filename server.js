@@ -36,6 +36,10 @@ app.use(
   cors({
     credentials: true,
     origin: origins,
+    "Set-Cookie": "gippea-third-party=true",
+    "Cache-Control": "no-cache",
+    "Content-Type": "text/html",
+    "Access-Control-Allow-Origin": "*",
   })
 );
 app.use(cookieParser());
