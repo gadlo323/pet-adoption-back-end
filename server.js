@@ -22,14 +22,15 @@ mongoose
   .catch((err) => console.error(err));
 
 //static files(css,js)& middleware
+app.set("trust proxy", true);
 app.use(express.static("./public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
-    origin: ["https://adoptefriend.netlify.app"],
+    origin: "https://adoptefriend.netlify.app",
+    "Access-Control-Allow-Origin": "*",
     credentials: true,
-    proxy: true,
   })
 );
 app.use(cookieParser());
