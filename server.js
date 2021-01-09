@@ -29,6 +29,7 @@ app.use(
   cors({
     origin: ["https://adoptefriend.netlify.app"],
     credentials: true,
+    proxy: true,
   })
 );
 app.use(cookieParser());
