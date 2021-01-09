@@ -38,4 +38,6 @@ app.use(cookieParser());
 app.use("/", petsRoutes);
 app.use("/", userRoutes);
 
-app.listen(port, () => console.log(`listen in port:${port}`));
+app.listen(process.env.PORT || 5000, () =>
+  console.log(`listen in port:${port}`)
+);
