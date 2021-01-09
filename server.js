@@ -28,8 +28,6 @@ const origins = [
   "https://adoptefriend.netlify.app",
 ];
 //static files& middleware
-// app.set("trust proxy", 1);
-app.use(express.static("./public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(
