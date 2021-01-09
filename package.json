@@ -2,12 +2,12 @@
   "name": "pet-adoption-back-end-gadlo323",
   "version": "1.0.0",
   "description": "pet adoption platform",
-  "main": "index.js",
+  "main": "server.js",
   "engines": {
     "node": "12.18.4" 
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
