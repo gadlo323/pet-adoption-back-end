@@ -6,7 +6,6 @@ const cookieParser = require("cookie-parser");
 const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
-const port = process.env.PORT || 5000;
 const mongo_url = process.env.MONGO_CONNECT;
 
 mongoose
@@ -28,7 +27,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
-    origin: true,
+    origin: "https://adoptfriend.herokuapp.com",
     credentials: true,
   })
 );
