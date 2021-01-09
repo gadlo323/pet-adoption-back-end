@@ -23,12 +23,11 @@ mongoose
 
 // ENABLING COR REQUESTS
 const origins = [
-  "http://localhost:3000", // Development
   "http://localhost:5000", // Production Build
-  "https://adoptfriend.herokuapp.com", // Just for debugging reasons
+  "https://adoptfriend.herokuapp.com",
   "https://adoptefriend.netlify.app",
 ];
-//static files(css,js)& middleware
+//static files& middleware
 app.set("trust proxy", 1);
 app.use(express.static("./public"));
 app.use(express.json());
@@ -37,6 +36,8 @@ app.use(
   cors({
     credentials: true,
     origin: origins,
+    allowedHeaders: ["Content-Type", "x-auth-token"],
+    methods: "GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE",
   })
 );
 app.use(cookieParser());
