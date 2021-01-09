@@ -63,7 +63,11 @@ const sign_in = async (req, res) => {
       role: userFound.role,
     };
     const newToken = createToken(tokenPayload);
-    res.cookie("token", newToken, { httpOnly: false, maxAge: maxAge * 1000 });
+    res.cookie("token", newToken, {
+      httpOnly: false,
+      domain: "https://adoptefriend.netlify.app",
+      maxAge: maxAge * 1000,
+    });
     return res.send(tokenPayload);
   });
 };
