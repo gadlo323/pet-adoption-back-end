@@ -24,7 +24,8 @@ const verifyToken = async (token) => {
 };
 
 const isAdmin = async (req, res, next) => {
-  const { token } = req.cookies;
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
   const userId = await verifyToken(token);
 
   if (!userId) res.status(403).send("Error, Forbidden");
