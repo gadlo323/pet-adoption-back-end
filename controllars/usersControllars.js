@@ -4,84 +4,7 @@ const pets = require("../models/petsModel");
 const { signIn, signUp, updateUser } = require("../utils/validations");
 const { createToken, verifyToken } = require("../utils/auth");
 
-// const sign_up = async (req, res, next) => {
-//   try {
-//     const { error } = signUp.validate(req.body);
-//     if (error) return res.status(400).send(error.details[0].message);
-//     // Check if this user already exisits
-//     const userExsicte = await users.findOne({ email: req.body.email });
-//     if (userExsicte) {
-//       return res.status(400).send("That email is already in use!");
-//     }
-//     const hashePassword = await bcrypt.hash(req.body.password, 10);
-//     let newUser = new users();
-//     newUser.role = "1";
-//     newUser.first_name = req.body.firstName;
-//     newUser.last_name = req.body.lastName;
-//     newUser.email = req.body.email;
-//     newUser.phone = req.body.phone;
-//     newUser.password = hashePassword;
-//     newUser.save((err, savadata) => {
-//       if (err) res.status(500).send("oops input was wrong!");
-//       else {
-//         const toketPayload = {
-//           uId: savadata._id,
-//           role: savadata.role,
-//           name: savadata.first_name + " " + savadata.last_name,
-//         };
-//         const token = createToken(toketPayload);
-//         res.cookie("token", token, { httpOnly: false, maxAge: maxAge * 1000 });
-//         res.status(201).json(toketPayload);
-//       }
-//     });
-//   } catch (err) {
-//     res
-//       .status(500)
-//       .send("There seems to be a server problem! Please try again later.");
-//   }
-// };
 
-// const sign_in = async (req, res) => {
-//   const { email, password } = req.body;
-//   //validate the input
-//   const { error } = signIn.validate(req.body);
-//   if (error) return res.status(400).send(error.details[0].message);
-//   //search user in db
-//   users.findOne({ email: email }, async (err, userFound) => {
-//     if (err) return res.status(400).send("Password or Email are incorrect !");
-//     if (!userFound) {
-//       return res.status(400).send("The username does not exist");
-//     }
-//     if (!bcrypt.compareSync(password, userFound.password)) {
-//       return res
-//         .status(400)
-//         .send({ message: "Password or Email are incorrect !" });
-//     }
-//     const tokenPayload = {
-//       uId: userFound._id,
-//       name: userFound.first_name + " " + userFound.last_name,
-//       role: userFound.role,
-//     };
-//     const newToken = createToken(tokenPayload);
-//     res.cookie("token", newToken, { httpOnly: false, maxAge: maxAge * 1000 });
-//     return res.send(tokenPayload);
-//   });
-// };
-
-// const token_valid = async (req, res) => {
-//   const { token } = req.cookies;
-//   if (token == null) {
-//     return res.status(401).send(false);
-//   }
-
-//   const userVerify = await verifyToken(token);
-//   if (!userVerify) {
-//     console.log("error");
-//     return res.status(403).send(userVerify);
-//   }
-
-//   res.send(token);
-// };
 
 const sign_up = async (req, res, next) => {
   try {
@@ -157,7 +80,11 @@ const token_valid = async (req, res) => {
 
   const userVerify = await verifyToken(token);
   if (!userVerify) {
+<<<<<<< HEAD
     return res.status(403).send(false);
+=======
+    return res.status(403).send(userVerify);
+>>>>>>> 2af1864c1c356f320704995f8c75f1530912ede3
   }
 
   res.send(true);

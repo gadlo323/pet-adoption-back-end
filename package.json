@@ -4,8 +4,13 @@
   "description": "pet adoption platform",
   "main": "server.js",
   "engines": {
+<<<<<<< HEAD
     "node": "12.18.4" 	
   },	  
+=======
+    "node": "12.18.4"
+  },
+>>>>>>> 2af1864c1c356f320704995f8c75f1530912ede3
   "scripts": {
     "start": "node server.js"
   },
@@ -26,15 +31,12 @@
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "crypto-js": "^4.0.0",
-    "datauri": "^3.0.0",
+    "csurf": "^1.11.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "express-validator": "^6.8.0",
     "joi": "^17.3.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.8",
-    "multer": "^1.4.2",
-    "passport": "^0.4.1",
-    "passport-local": "^1.0.0"
+    "multer": "^1.4.2"
   }
 }

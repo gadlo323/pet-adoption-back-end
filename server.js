@@ -21,15 +21,19 @@ mongoose
   })
   .catch((err) => console.error(err));
 
-//static files(css,js)& middleware
-
-app.use(express.static("./public"));
+// ENABLING COR REQUESTS
+const origins = [
+  "http://localhost:5000", // Production Build
+  "https://adoptfriend.herokuapp.com",
+  "https://adoptefriend.netlify.app",
+];
+//static files& middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
-    origin: true,
     credentials: true,
+    origin: true,
   })
 );
 app.use(cookieParser());
@@ -38,4 +42,10 @@ app.use(cookieParser());
 app.use("/", petsRoutes);
 app.use("/", userRoutes);
 
+<<<<<<< HEAD:server.js
 app.listen(port, () => console.log(`listen in port: ${port}`));
+=======
+app.listen(process.env.PORT || 5000, () =>
+  console.log(`listen in port:${port}`)
+);
+>>>>>>> 2af1864c1c356f320704995f8c75f1530912ede3:app.js
